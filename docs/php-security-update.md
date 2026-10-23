@@ -99,6 +99,37 @@ Gunakan template BPS-CSIRT yang disebut dalam pemberitahuan untuk pelaporan.
 Perubahan repository ini tidak mengirim laporan atau menyatakan server sudah
 ditambal.
 
+## Hasil verifikasi repository
+
+Perbaikan runtime pada commit `abebeb43972b091450ec9349a94bc277170e16d0`:
+
+- [GitHub Actions: lulus](https://github.com/albertassidiq/TautPinang/actions/runs/39932202443).
+  Image produksi berhasil dibangun dari Dockerfile; versi CLI dan FPM,
+  persyaratan platform Composer, PHP INI, serta akses halaman login melalui
+  NGINX/PHP-FPM berhasil diperiksa.
+- `npm ci` dan `npm run build`: lulus. Build masih mengeluarkan warning lama
+  terkait data Browserslist dan konfigurasi `darkMode` Tailwind.
+- `composer check-platform-reqs --no-dev`: lulus di PHP 8.3.36; PHP lokal
+  8.2.12 ditolak oleh batas versi baru. Uji batas menerima 8.3.36 dan 8.3.37,
+  serta menolak versi rentan yang diuji.
+- `composer validate --strict --no-check-publish`: manifest dan lockfile
+  sinkron; pemeriksaan strict masih memberi warning untuk constraint
+  `laravel/socialite: *` yang sudah ada.
+- Suite PHPUnit dijalankan dengan PHP 8.3.36, SQLite in-memory, dan kunci
+  aplikasi khusus pengujian: **32 test, 22 lulus, 3 gagal, 7 dilewati**.
+
+Test yang masih gagal:
+
+| Test | Hasil |
+| --- | --- |
+| `Tests\Feature\ExampleTest::test_the_application_returns_a_successful_response` | Mengharapkan HTTP 200, mendapat redirect 302 |
+| `Tests\Feature\PasswordConfirmationTest::test_confirm_password_screen_can_be_rendered` | Mengharapkan HTTP 200, mendapat redirect 302 |
+| `Tests\Feature\PasswordConfirmationTest::test_password_is_not_confirmed_with_invalid_password` | Session tidak memiliki key `errors` yang diharapkan |
+
+Perbaikan runtime ini tidak mengubah kode aplikasi maupun file test. Hasil
+di atas tidak berarti seluruh fungsi aplikasi atau server produksi sudah
+terverifikasi; pengujian deployment pada server tetap harus dilakukan.
+
 ## Temuan dependensi lain
 
 Audit `composer audit --locked` pada 23 Oktober 2026 menemukan **53 advisori
