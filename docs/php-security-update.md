@@ -80,6 +80,11 @@ Jalankan `composer install --no-dev --prefer-dist --optimize-autoloader` dan
 diproses, lalu ulangi pengujian aplikasi. Jangan gunakan `--ignore-platform-reqs`
 atau `config.platform.php` untuk menyamarkan runtime yang masih rentan.
 
+Setelah pembaruan framework pada instalasi VM, jalankan
+`php artisan optimize:clear` untuk membuang cache konfigurasi, route, dan view
+dari versi sebelumnya. Buat kembali cache konfigurasi sesuai proses deployment
+yang biasa digunakan setelah environment produksi dipastikan benar.
+
 ## Catatan inventaris dan pelaporan
 
 Status runtime server produksi tidak dapat ditentukan dari source repository.
@@ -143,6 +148,11 @@ menggunakan MySQL 8.4 dan volume persisten untuk database serta unggahan.
 Lihat [panduan Docker](docker.md) dan workflow
 [PHP runtime security](../.github/workflows/php-runtime.yml) untuk audit,
 suite test, build produksi, pengujian MySQL, dan penggantian container.
+
+[CI perubahan kode 30d2c52](https://github.com/albertassidiq/TautPinang/actions/runs/39937212011)
+lulus: audit lengkap, validasi Composer, suite PHPUnit, build produksi,
+verifikasi CLI/FPM, migrasi MySQL, halaman login NGINX/PHP-FPM, dan file
+unggahan yang tetap tersedia setelah container aplikasi diganti.
 
 Verifikasi repository tidak menggantikan pemeriksaan server produksi. Rebuild,
 redeploy, penggantian seluruh worker, dan uji pada server tetap wajib dilakukan.

@@ -11,7 +11,7 @@
 - [x] Reproduce the password-confirmation failures. Add regression coverage for new-user defaults and rejection of inactive/disabled users; make model defaults agree with database defaults. Correct the home-route test to assert the intended login redirect.
 - [x] Upgrade Composer dependencies to secure compatible releases. Migrate Livewire events, model bindings, JavaScript hooks, component configuration, and Alpine integration. Test authenticated application pages and Livewire actions, not only the login page.
 - [x] Update Dockerfile and add Compose with a persistent database and upload volume, required environment configuration, health checks, and explicit migration instructions. Extend CI to audit dependencies and run the complete test suite and container smoke test.
-- [ ] Verify Composer audit and validation, PHPUnit, frontend build, Docker/Compose CI, and changes against the original application behavior. Update deployment documentation, commit, and push.
+- [x] Verify Composer audit and validation, PHPUnit, frontend build, Docker/Compose CI, and changes against the original application behavior. Update deployment documentation, commit, and push.
 
 ## Review focus
 
