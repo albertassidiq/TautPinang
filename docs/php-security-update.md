@@ -99,47 +99,53 @@ Gunakan template BPS-CSIRT yang disebut dalam pemberitahuan untuk pelaporan.
 Perubahan repository ini tidak mengirim laporan atau menyatakan server sudah
 ditambal.
 
-## Hasil verifikasi repository
+## Hasil verifikasi setelah pembaruan dependensi
 
-Perbaikan runtime pada commit `abebeb43972b091450ec9349a94bc277170e16d0`:
+Pembaruan lanjutan pada 23 Oktober 2026 menaikkan Laravel ke **12.70.1**,
+Jetstream ke **5.5.3**, Sanctum ke **4.3.3**, Socialite ke **5.31.0**, dan
+Livewire ke **3.8.11**. PHPUnit diperbarui ke **12.5.40**. Dependensi transitif
+termasuk Symfony, Guzzle, CommonMark, Flysystem, JWT, serta phpseclib diperbarui
+melalui Composer tanpa pengecualian advisori atau platform requirement.
 
-- [GitHub Actions: lulus](https://github.com/albertassidiq/TautPinang/actions/runs/39932202443).
-  Image produksi berhasil dibangun dari Dockerfile; versi CLI dan FPM,
-  persyaratan platform Composer, PHP INI, serta akses halaman login melalui
-  NGINX/PHP-FPM berhasil diperiksa.
-- `npm ci` dan `npm run build`: lulus. Build masih mengeluarkan warning lama
-  terkait data Browserslist dan konfigurasi `darkMode` Tailwind.
-- `composer check-platform-reqs --no-dev`: lulus di PHP 8.3.36; PHP lokal
-  8.2.12 ditolak oleh batas versi baru. Uji batas menerima 8.3.36 dan 8.3.37,
-  serta menolak versi rentan yang diuji.
-- `composer validate --strict --no-check-publish`: manifest dan lockfile
-  sinkron; pemeriksaan strict masih memberi warning untuk constraint
-  `laravel/socialite: *` yang sudah ada.
-- Suite PHPUnit dijalankan dengan PHP 8.3.36, SQLite in-memory, dan kunci
-  aplikasi khusus pengujian: **32 test, 22 lulus, 3 gagal, 7 dilewati**.
+Hasil pengujian lokal menggunakan PHP 8.3.36:
 
-Test yang masih gagal:
+- `composer audit --locked`: **0 advisori, 0 paket abandoned**, termasuk paket
+  development. Audit awal sebelumnya mencatat 53 advisori pada 16 paket.
+- `composer validate --strict --no-check-publish`: lulus; constraint Socialite
+  kini dibatasi pada major yang kompatibel.
+- `composer check-platform-reqs`: lulus untuk seluruh paket.
+- `php vendor/bin/phpunit --fail-on-warning`: **40 test, 90 assertions,
+  33 lulus, 7 dilewati, 0 gagal**. Test yang dilewati mengikuti konfigurasi
+  fitur Jetstream/Fortify, termasuk API token, verifikasi email, dan cabang
+  registrasi yang tidak berlaku.
+- `npm ci` dan `npm run build`: lulus. Build masih memberi warning terkait
+  data Browserslist lama serta konfigurasi `darkMode` Tailwind.
+- Uji browser lokal: login, live preview, menyimpan tautan, serta membuka dialog
+  detail berhasil. Pengujian browser memakai database SQLite sementara.
 
-| Test | Hasil |
-| --- | --- |
-| `Tests\Feature\ExampleTest::test_the_application_returns_a_successful_response` | Mengharapkan HTTP 200, mendapat redirect 302 |
-| `Tests\Feature\PasswordConfirmationTest::test_confirm_password_screen_can_be_rendered` | Mengharapkan HTTP 200, mendapat redirect 302 |
-| `Tests\Feature\PasswordConfirmationTest::test_password_is_not_confirmed_with_invalid_password` | Session tidak memiliki key `errors` yang diharapkan |
+Tiga test yang sebelumnya gagal kini lulus. Default model user disamakan dengan
+schema database (`status=active`, `role=user`) agar objek baru tidak langsung
+ditolak middleware; akun inactive dan disabled tetap ditolak. Test beranda
+mengikuti redirect login yang memang didefinisikan aplikasi, dan test password
+memastikan timestamp konfirmasi hanya dibuat untuk password yang benar.
 
-Perbaikan runtime ini tidak mengubah kode aplikasi maupun file test. Hasil
-di atas tidak berarti seluruh fungsi aplikasi atau server produksi sudah
-terverifikasi; pengujian deployment pada server tetap harus dilakukan.
+Pengujian tambahan mencakup halaman login dan halaman setelah login,
+pembuatan/perubahan tautan Livewire, halaman tautan publik, unggah logo,
+pagination, akses admin, dan request Livewire nyata setelah role admin dicabut.
+Custom RoleMiddleware kini diperiksa ulang pada request Livewire berikutnya.
+Migrasi Livewire juga memperbarui event, binding, hook JavaScript, entanglement
+modal, dan integrasi Alpine. Literal JSON-LD `@context` di-escape untuk compiler
+Blade baru. Tidak ada perubahan schema atau migrasi reset database.
 
-## Temuan dependensi lain
+Dockerfile mempertahankan PHP yang sudah ditambal dan menyediakan target
+`testing` serta `production`. Node.js build diperbarui ke 24. Stack Compose
+menggunakan MySQL 8.4 dan volume persisten untuk database serta unggahan.
+Lihat [panduan Docker](docker.md) dan workflow
+[PHP runtime security](../.github/workflows/php-runtime.yml) untuk audit,
+suite test, build produksi, pengujian MySQL, dan penggantian container.
 
-Audit `composer audit --locked` pada 23 Oktober 2026 menemukan **53 advisori
-pada 16 paket**, termasuk advisori dengan severity tinggi pada Laravel,
-Guzzle, CommonMark, phpseclib, dan Symfony MIME. Temuan ini berbeda dari dua CVE
-runtime PHP di atas. Perubahan ini mempertahankan versi paket pada lockfile;
-audit dependensi belum bersih dan pembaruan framework/dependensi perlu
-ditindaklanjuti dengan pengujian kompatibilitas aplikasi.
-
-Jalankan kembali `composer audit --locked` untuk daftar dan status terbaru.
+Verifikasi repository tidak menggantikan pemeriksaan server produksi. Rebuild,
+redeploy, penggantian seluruh worker, dan uji pada server tetap wajib dilakukan.
 
 ## Referensi
 

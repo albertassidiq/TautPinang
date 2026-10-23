@@ -1,5 +1,5 @@
 # Stage 1: Node.js build for frontend assets
-FROM node:20-alpine AS node-builder
+FROM node:24-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS node-builder
 
 WORKDIR /app
 
@@ -37,8 +37,19 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev \
     && composer check-platform-reqs --no-dev
 
+# Test image uses the same PHP runtime and complete Composer lockfile.
+FROM composer-builder AS testing
+
+RUN install-php-extensions pdo_sqlite
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader \
+    && composer check-platform-reqs
+
+COPY --from=node-builder /app/public/build /app/public/build
+
+CMD ["php", "vendor/bin/phpunit", "--colors=never", "--fail-on-warning"]
+
 # Stage 3: Production image
-FROM serversideup/php:8.3.36-fpm-nginx@sha256:e6e9d1a027d603dd6399adc66cb85f83e474ca11fb521e1c2eb1411a82dd5ff0
+FROM serversideup/php:8.3.36-fpm-nginx@sha256:e6e9d1a027d603dd6399adc66cb85f83e474ca11fb521e1c2eb1411a82dd5ff0 AS production
 
 ENV PHP_OPCACHE_ENABLE=1
 
@@ -62,7 +73,8 @@ RUN composer check-platform-reqs --no-dev
 # Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html/bootstrap/cache \
+    && ln -s ../storage/app/public /var/www/html/public/storage
 
 # Switch to www-data user
 USER www-data

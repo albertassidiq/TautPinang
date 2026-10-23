@@ -1,5 +1,16 @@
 # TautPinang
 
+## Pembaruan dependensi dan Docker
+
+Project kini memakai Laravel **12.70.1**, Jetstream **5.5.3**, Livewire **3.8.11**,
+dan PHP **8.3.36**. Seluruh 53 advisori Composer yang sebelumnya ditemukan
+sudah diselesaikan: audit terbaru melaporkan **0 advisori**. Suite PHPUnit
+menjalankan 40 test: **33 lulus, 7 dilewati, 0 gagal**.
+
+Tersedia `Dockerfile`, `compose.yaml`, serta `.env.docker.example` untuk stack
+NGINX/PHP-FPM dan MySQL dengan volume persisten. Ikuti [panduan Docker](docs/docker.md)
+untuk konfigurasi, menjalankan aplikasi, dan pembaruan tanpa menghapus data.
+
 ## Pembaruan keamanan PHP — 23 Oktober 2026
 
 Project ini menggunakan **PHP 8.3.36 atau patch PHP 8.3 yang lebih baru**
