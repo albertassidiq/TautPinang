@@ -1,0 +1,70 @@
+name: PHP runtime security
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build patched production image
+        run: docker build --pull --no-cache --tag tautpinang:security .
+
+      - name: Verify CLI and FPM runtimes
+        run: |
+          docker run --rm --entrypoint php tautpinang:security -v
+          docker run --rm --entrypoint php-fpm tautpinang:security -v
+          docker run --rm --entrypoint composer tautpinang:security check-platform-reqs --no-dev
+          docker run --rm --entrypoint php tautpinang:security -r '
+            if (PHP_VERSION_ID < 80336 || PHP_VERSION_ID >= 80400) {
+                fwrite(STDERR, "Expected patched PHP 8.3 runtime.\n");
+                exit(1);
+            }
+            if (ini_get("session.upload_progress.enabled")) {
+                fwrite(STDERR, "Upload progress must be disabled.\n");
+                exit(1);
+            }
+          '
+          docker run --rm --entrypoint php-fpm tautpinang:security -i > /tmp/tautpinang-fpm-info.txt
+          grep -Eq '^session.upload_progress.enabled => Off => Off$' /tmp/tautpinang-fpm-info.txt
+
+      - name: Start application with test configuration
+        run: |
+          docker run --detach --name tautpinang-security \
+            --publish 127.0.0.1:8080:8080 \
+            --env APP_ENV=testing \
+            --env APP_DEBUG=false \
+            --env APP_KEY=base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \
+            --env SESSION_DRIVER=file \
+            --env CACHE_DRIVER=array \
+            tautpinang:security
+
+      - name: Smoke test login through NGINX and PHP-FPM
+        run: |
+          for attempt in {1..30}; do
+            status=$(curl --silent --output /tmp/tautpinang-login.html --write-out '%{http_code}' http://127.0.0.1:8080/login || true)
+            if [ "$status" = "200" ] && grep -q 'name="email"' /tmp/tautpinang-login.html; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs tautpinang-security
+          exit 1
+
+      - name: Container logs
+        if: failure()
+        run: docker logs tautpinang-security || true
+
+      - name: Stop test container
+        if: always()
+        run: docker rm --force tautpinang-security || true
