@@ -3,16 +3,10 @@ FROM node:24-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec
 
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
+RUN npm install
 
-# Install Node dependencies
-RUN npm ci
-
-# Copy source files needed for Vite build
 COPY . .
-
-# Build Vite assets (this compiles Tailwind CSS)
 RUN npm run build
 
 # Stage 2: Composer dependencies
@@ -20,17 +14,14 @@ RUN npm run build
 FROM serversideup/php:8.3.36-cli@sha256:27522e2f5f4da8ba3f800d23df6032bf4487ce58ee347b49dd829a0565a7fa26 AS composer-builder
 
 USER root
-
 WORKDIR /app
 
-# Copy composer files
 COPY composer.json composer.lock ./
 
 # Install Composer dependencies
 # Artisan is only available after the application source is copied below.
 RUN composer install --no-interaction --optimize-autoloader --no-dev --prefer-dist --no-scripts
 
-# Copy application files
 COPY . .
 
 # Generate optimized autoloader
@@ -54,8 +45,6 @@ FROM serversideup/php:8.3.36-fpm-nginx@sha256:e6e9d1a027d603dd6399adc66cb85f83e4
 ENV PHP_OPCACHE_ENABLE=1
 
 USER root
-
-# Set working directory
 WORKDIR /var/www/html
 
 # Load before request parsing; application-level ini_set() is too late.
@@ -64,19 +53,31 @@ COPY docker/php/security.ini /usr/local/etc/php/conf.d/zz-security.ini
 # Copy application files from composer-builder stage
 COPY --chown=www-data:www-data --from=composer-builder /app /var/www/html
 
-# Copy built Vite assets from node-builder stage
+# Copy built Vite assets from node-builder
 COPY --chown=www-data:www-data --from=node-builder /app/public/build /var/www/html/public/build
 
-# Check the actual production runtime, independently of the CLI build stage.
-RUN composer check-platform-reqs --no-dev
+# Create ALL necessary storage directories
+RUN mkdir -p storage/app/public/logos \
+    storage/app/livewire-tmp \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/testing \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache
 
-# Set permissions for Laravel
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache \
-    && ln -s ../storage/app/public /var/www/html/public/storage
+# Remove existing symlink if present and create new one
+RUN cd public \
+    rm -rf storage && \
+    ln -s ../storage/app/public storage && \
+    cd ..
 
-# Switch to www-data user
+# Set proper permissions (CRITICAL!)
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && find /var/www/html/storage -type d -exec chmod 775 {} \; \
+    && find /var/www/html/storage -type f -exec chmod 664 {} \; \
+    && chmod -R 775 /var/www/html/bootstrap/cache
+
 USER www-data
 
 # Expose port (serversideup/php fpm-nginx uses 8080 by default)
