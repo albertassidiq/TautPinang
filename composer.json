@@ -5,9 +5,9 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "~8.3.36",
+        "php": "~8.3.37",
         "guzzlehttp/guzzle": "^7.15.2",
-        "laravel/framework": "^12.70.1",
+        "laravel/framework": "^12.71.0",
         "laravel/jetstream": "^5.5.3",
         "laravel/sanctum": "^4.3.3",
         "laravel/socialite": "^5.31",

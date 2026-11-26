@@ -44,6 +44,41 @@ class Tautan extends Model
         'deleted_at',
     ];
 
+    /**
+     * Font Awesome class list only, e.g. "fa-solid fa-house" or "fab fa-instagram".
+     * Icon values come from the client, so anything else is dropped.
+     */
+    public const ICON_CLASS_PATTERN = '/^fa[a-z0-9-]*(?: fa[a-z0-9-]*){0,5}$/D';
+
+    public static function sanitizeIconClass($icon): string
+    {
+        if (!is_string($icon)) {
+            return '';
+        }
+
+        $icon = trim($icon);
+
+        if (strlen($icon) > 100 || !preg_match(self::ICON_CLASS_PATTERN, $icon)) {
+            return '';
+        }
+
+        return $icon;
+    }
+
+    /**
+     * Normalize the icon of every link before it is stored.
+     */
+    public static function sanitizeLinkIcons(array $links): array
+    {
+        return array_map(function ($link) {
+            if (is_array($link) && array_key_exists('icon', $link)) {
+                $link['icon'] = self::sanitizeIconClass($link['icon']);
+            }
+
+            return $link;
+        }, $links);
+    }
+
     // Relationships
     public function user()
     {

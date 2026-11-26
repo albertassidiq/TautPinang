@@ -16,8 +16,9 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Composer dependencies
-# Patched for CVE-2026-109618 and CVE-2026-109619. Keep both PHP stages aligned.
-FROM serversideup/php:8.3.36-cli@sha256:27522e2f5f4da8ba3f800d23df6032bf4487ce58ee347b49dd829a0565a7fa26 AS composer-builder
+# PHP 8.3.37 (19 Nov 2026 security release) also covers CVE-2026-109618/109619.
+# Keep both PHP stages aligned.
+FROM serversideup/php:8.3.37-cli@sha256:18c82d8812b92ca38d91e87d71655f296208b92f3085b5b6e1ddad4656859d4c AS composer-builder
 
 USER root
 
@@ -49,7 +50,7 @@ COPY --from=node-builder /app/public/build /app/public/build
 CMD ["php", "vendor/bin/phpunit", "--colors=never", "--fail-on-warning"]
 
 # Stage 3: Production image
-FROM serversideup/php:8.3.36-fpm-nginx@sha256:e6e9d1a027d603dd6399adc66cb85f83e474ca11fb521e1c2eb1411a82dd5ff0 AS production
+FROM serversideup/php:8.3.37-fpm-nginx@sha256:8fdc286697c1279f793d40ce4a1ed15107052f8278f23b9395fbfa639d0111d6 AS production
 
 ENV PHP_OPCACHE_ENABLE=1
 

@@ -669,11 +669,7 @@
                             $enableCustomStyling = $link['enableCustomStyling'] ?? false;
 
                             // Icon support
-                            $icon = $link['icon'] ?? '';
-                            $iconHtml = '';
-                            if (!empty($icon)) {
-                                $iconHtml = '<i class="' . $icon . ' link-icon"></i> ';
-                            }
+                            $icon = \App\Models\Tautan::sanitizeIconClass($link['icon'] ?? '');
 
                             if ($enableCustomStyling) {
                                 // Custom styling ENABLED - gunakan warna dari link ini
@@ -695,7 +691,10 @@
                                style="{{ $inlineStyle }}"
                            @endif
                         >
-                            {!! $iconHtml !!}{{ $link['judul'] }}
+                            @if ($icon !== '')
+                                <i class="{{ $icon }} link-icon"></i>
+                            @endif
+                            {{ $link['judul'] }}
                         </a>
                     @endif
                 @endforeach
