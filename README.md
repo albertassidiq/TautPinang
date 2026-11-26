@@ -4,7 +4,8 @@
 
 Project kini memakai Laravel **12.74.0**, Symfony **7.4.24**, Jetstream **5.5.3**,
 Livewire **3.8.11**, dan PHP **8.3.37**. Audit Composer terbaru (26 November 2026)
-melaporkan **0 advisori**.
+melaporkan **0 advisori**. Suite PHPUnit di CI menjalankan 44 test:
+**37 lulus, 7 dilewati, 0 gagal**.
 
 Tersedia `Dockerfile`, `compose.yaml`, serta `.env.docker.example` untuk stack
 NGINX/PHP-FPM dan MySQL dengan volume persisten. Ikuti [panduan Docker](docs/docker.md)
