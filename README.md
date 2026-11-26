@@ -1,137 +1,196 @@
+<a id="readme-top"></a>
+
+<div align="center">
+
+<img src="public/img/favicon.png" alt="Logo TautPinang" width="120" height="120">
+
 # TautPinang
 
-TautPinang adalah aplikasi web untuk membuat dan mengelola **halaman kumpulan
-tautan** (link-in-bio). Setiap halaman punya alamat sendiri, misalnya
-`https://domain-anda/bps-tanjungpinang`, berisi logo, judul, deskripsi, daftar
-tombol tautan, dan QR code. Tampilannya bisa diatur tanpa menulis kode.
+**Satu halaman, banyak tautan: rapi, cepat, dan mudah dibagikan.**
 
-Dibangun dengan Laravel 12, Livewire 3, Jetstream, dan Tailwind CSS.
+Aplikasi web untuk membuat dan mengelola halaman kumpulan tautan (*link-in-bio*)
+lengkap dengan QR code, gaya tampilan yang bisa diatur, dan panel admin.
 
-## Daftar isi
+[![PHP runtime security](https://github.com/albertassidiq/TautPinang/actions/workflows/php-runtime.yml/badge.svg)](https://github.com/albertassidiq/TautPinang/actions/workflows/php-runtime.yml)
+![PHP](https://img.shields.io/badge/PHP-8.3.37-777BB4?logo=php&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
+![Livewire](https://img.shields.io/badge/Livewire-3-FB70A9?logo=livewire&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
 
-- [Fitur](#fitur)
-- [Peran pengguna](#peran-pengguna)
-- [Halaman aplikasi](#halaman-aplikasi)
-- [Teknologi](#teknologi)
-- [Menjalankan aplikasi](#menjalankan-aplikasi)
-- [Konfigurasi](#konfigurasi)
-- [Pengujian](#pengujian)
-- [Keamanan](#keamanan)
+[Fitur](#-fitur) · [Tampilan](#-tampilan) · [Tech Stack](#-tech-stack) · [Mulai Cepat](#-mulai-cepat) · [Keamanan](#-keamanan)
 
-## Fitur
+<br>
 
-### Pembuat tautan (Buat Tautan)
+<img src="docs/screenshots/buat-tautan.png" alt="Halaman Buat Tautan dengan live preview" width="88%">
 
-- **Live preview**: tampilan halaman diperbarui seketika saat form diubah.
-- **Identitas halaman**: judul, deskripsi, dan *slug* unik (huruf, angka, `-`, `_`)
-  yang menjadi alamat publik.
-- **Logo**: pilih dari URL atau unggah gambar (klik atau *drag & drop*, maks. 2 MB).
-- **Daftar tautan**:
-  - tambah dan hapus tautan, atur ulang urutan dengan *drag & drop*;
-  - aktifkan/nonaktifkan tiap tautan tanpa menghapusnya;
-  - pilih **icon Font Awesome** lewat icon picker;
-  - warna latar dan teks khusus per tautan.
-- **Gaya tombol global**: warna latar, teks, dan border; ketebalan, jenis, dan
-  radius border; efek *hover* (gradien, warna, border, dan *glow*). Warna
-  mendukung transparansi (RGBA).
-- **QR code**: tampilkan QR code halaman, atur posisi, warna, warna border,
-  latar, dan tingkat transparansinya.
-- **Footer**: dua baris teks footer.
-- **Editor gaya JSON** untuk mengatur seluruh gaya sekaligus, serta tombol
-  isi data contoh, reset gaya, dan reset form.
-- **Unduh HTML**: ekspor halaman sebagai file `.html` statis.
+</div>
+
+<br>
+
+<details>
+<summary><strong>Daftar isi</strong></summary>
+
+- [Tentang](#-tentang)
+- [Fitur](#-fitur)
+- [Tampilan](#-tampilan)
+- [Tech Stack](#-tech-stack)
+- [Arsitektur](#-arsitektur)
+- [Mulai Cepat](#-mulai-cepat)
+- [Konfigurasi](#-konfigurasi)
+- [Struktur Proyek](#-struktur-proyek)
+- [Pengujian & CI](#-pengujian--ci)
+- [Keamanan](#-keamanan)
+
+</details>
+
+## 📌 Tentang
+
+TautPinang mengumpulkan banyak tautan penting ke dalam satu halaman dengan
+alamat yang mudah diingat, misalnya `https://domain-anda/layanan-statistik`.
+Halaman bisa dibuat tanpa menulis kode, langsung terlihat hasilnya lewat
+*live preview*, dan bisa dibagikan sebagai tautan atau QR code.
+
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <h3>🎨 Desain tanpa kode</h3>
+      Atur logo, warna, tombol, efek hover, icon, dan QR code, lalu lihat hasilnya seketika.
+    </td>
+    <td width="33%" valign="top">
+      <h3>🗂️ Kelola dengan mudah</h3>
+      Cari, filter, duplikat, aksi massal, impor/ekspor JSON, dan pemulihan data terhapus.
+    </td>
+    <td width="33%" valign="top">
+      <h3>🔐 Aman untuk tim</h3>
+      Peran admin dan user, login Google, 2FA, dan akun nonaktif otomatis menonaktifkan halamannya.
+    </td>
+  </tr>
+</table>
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+## ✨ Fitur
+
+### Pembuat tautan
+
+| Fitur | Keterangan |
+| --- | --- |
+| **Live preview** | Tampilan halaman diperbarui seketika saat form diubah, dalam mode mobile atau desktop. |
+| **Identitas halaman** | Judul, deskripsi, dan *slug* unik yang menjadi alamat publik. |
+| **Logo** | Dari URL atau unggah gambar (klik atau *drag & drop*, maks. 2 MB). |
+| **Daftar tautan** | Tambah, hapus, urutkan dengan *drag & drop*, dan aktif/nonaktifkan per tautan. |
+| **Icon** | Pilih icon Font Awesome untuk tiap tautan lewat icon picker. |
+| **Gaya tombol** | Warna latar, teks, dan border; radius; efek hover (gradien dan *glow*); warna RGBA; warna khusus per tautan. |
+| **QR code** | Atur posisi, ukuran, warna, border, dan transparansi QR code halaman. |
+| **Footer dan editor JSON** | Dua baris footer, plus editor gaya JSON untuk mengatur seluruh gaya sekaligus. |
+| **Unduh HTML** | Ekspor halaman sebagai file `.html` statis. |
 
 ### Halaman publik
 
-- Bisa diakses tanpa login di `/{slug}`.
-- Meta tag Open Graph untuk pratinjau saat dibagikan ke media sosial; gambar
-  pratinjaunya memakai QR code halaman.
-- Tautan nonaktif tidak ditampilkan. Halaman nonaktif atau slug yang tidak ada
-  menampilkan halaman 404 khusus.
-
-### Dashboard
-
-Ringkasan milik pengguna: jumlah halaman tautan, jumlah yang aktif, total
-tombol tautan, dan lima halaman terbaru.
+- Bisa diakses tanpa login di `/{slug}`, nyaman dibuka di ponsel.
+- Meta tag Open Graph untuk pratinjau saat dibagikan ke media sosial.
+- Tautan nonaktif disembunyikan. Halaman nonaktif, halaman milik akun nonaktif,
+  atau slug yang tidak ada menampilkan halaman 404 khusus.
 
 ### Kelola tautan
 
-- Cari, filter (status aktif, jenis logo: unggahan/URL), dan urutkan.
+- Cari, filter (status, jenis logo), dan urutkan; statistik total, aktif, terhapus, dan jumlah tautan.
 - Lihat detail, edit, **duplikat**, serta aktifkan/nonaktifkan halaman.
 - **Aksi massal**: aktifkan, nonaktifkan, atau hapus beberapa halaman sekaligus.
-- **Impor dan ekspor** data halaman dalam format JSON (impor maks. 1 MB).
-- **Riwayat terhapus** (*soft delete*): pulihkan halaman, atau hapus permanen,
-  satu per satu maupun massal.
-- Hanya pembuat halaman yang dapat mengubah isinya.
+- **Impor dan ekspor** data dalam format JSON.
+- **Riwayat terhapus**: pulihkan halaman atau hapus permanen, satu per satu maupun massal.
 
-### Akun dan autentikasi
+### Akun dan admin
 
-- Registrasi dan login dengan email/password.
-- **Login dengan Google** (OAuth). Akun Google dihubungkan ke akun yang
-  emailnya sama.
-- Autentikasi dua faktor (2FA), ubah profil dan password, keluar dari sesi
-  browser lain, serta hapus akun (fitur Jetstream).
-- Akun yang dinonaktifkan tidak dapat login, termasuk lewat Google.
-
-### Antarmuka
-
-- **Mode gelap** di halaman login, dashboard, buat/edit tautan, kelola tautan,
-  dan manajemen user.
-- Halaman Syarat & Ketentuan serta Kebijakan Privasi.
-
-## Peran pengguna
+- Registrasi, login email/password, dan **login dengan Google**.
+- Autentikasi dua faktor (2FA), kelola profil, password, dan sesi browser.
+- **Manajemen user** (admin): tambah, edit, ubah role, reset password, aktifkan/nonaktifkan akun.
+- **Mode gelap** di seluruh halaman utama.
 
 | Kemampuan | User | Admin |
 | --- | :---: | :---: |
 | Membuat, mengedit, dan menghapus halaman milik sendiri | ✅ | ✅ |
 | Melihat dan mengaktifkan/menonaktifkan halaman semua pengguna | — | ✅ |
-| Manajemen user: tambah, edit, ubah role, reset password | — | ✅ |
-| Mengaktifkan/menonaktifkan akun user | — | ✅ |
+| Manajemen user dan role | — | ✅ |
 
-Halaman tautan milik akun yang dinonaktifkan (`inactive` atau `disabled`) tidak
-dapat diakses publik dan menampilkan 404, sampai akunnya diaktifkan kembali.
-Admin tidak dapat menonaktifkan admin lain.
+> [!NOTE]
+> Hanya pembuat halaman yang dapat mengubah isinya. Halaman milik akun yang
+> dinonaktifkan langsung tidak dapat diakses publik sampai akunnya aktif kembali.
 
-## Halaman aplikasi
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
 
-| URL | Keterangan | Akses |
-| --- | --- | --- |
-| `/login`, `/register` | Masuk dan daftar | Publik |
-| `/auth/google` | Login dengan Google | Publik |
-| `/dashboard` | Ringkasan | Login |
-| `/buat-tautan` | Membuat halaman tautan | Login |
-| `/kelola-tautan` | Daftar dan pengelolaan halaman | Login |
-| `/edit-tautan/{id}` | Mengedit halaman milik sendiri | Login |
-| `/user/profile` | Profil, password, 2FA, sesi | Login |
-| `/user-management` | Manajemen user | Admin |
-| `/{slug}` | Halaman tautan publik | Publik |
+## 📸 Tampilan
 
-## Teknologi
+<table>
+  <tr>
+    <td width="68%" align="center"><img src="docs/screenshots/kelola-tautan.png" alt="Kelola Tautan"><br><sub><b>Kelola Tautan</b>: statistik, pencarian, dan aksi cepat</sub></td>
+    <td width="32%" align="center" rowspan="2"><img src="docs/screenshots/public-mobile.png" alt="Halaman publik di ponsel"><br><sub><b>Halaman publik</b> di ponsel</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/user-management.png" alt="User Management"><br><sub><b>User Management</b>: role dan status akun</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/buat-tautan-dark.png" alt="Buat Tautan mode gelap"><br><sub><b>Mode gelap</b></sub></td>
+    <td align="center"><img src="docs/screenshots/login.png" alt="Halaman login"><br><sub><b>Login</b> dengan email atau Google</sub></td>
+  </tr>
+</table>
 
-- **Backend**: PHP 8.3.37+, Laravel 12, Livewire 3, Jetstream 5 (Fortify,
-  Sanctum), Laravel Socialite (Google)
-- **Frontend**: Tailwind CSS, Alpine.js, Vite, Font Awesome
-- **Database**: MySQL 8.4 (produksi/Docker), SQLite (pengujian)
-- **Runtime**: Docker image `serversideup/php` (NGINX + PHP-FPM)
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
 
-## Menjalankan aplikasi
+## 🧰 Tech Stack
+
+<p align="center">
+  <a href="https://skillicons.dev"><img src="https://skillicons.dev/icons?i=php,laravel,tailwind,alpinejs,vite,mysql,sqlite,docker,nginx,githubactions" alt="Tech stack"></a>
+</p>
+
+| Lapisan | Teknologi |
+| --- | --- |
+| Backend | PHP 8.3.37, Laravel 12, Livewire 3 |
+| Autentikasi | Jetstream 5 (Fortify, Sanctum), Laravel Socialite (Google OAuth) |
+| Frontend | Tailwind CSS 3, Alpine.js, Vite, Font Awesome |
+| Database | MySQL 8.4 (produksi), SQLite (pengujian) |
+| Infrastruktur | Docker (`serversideup/php`: NGINX + PHP-FPM), GitHub Actions |
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+## 🏗️ Arsitektur
+
+```mermaid
+flowchart LR
+    V([Pengunjung]) -->|/slug| N
+    U([User / Admin]) -->|dashboard| N
+    subgraph App["Container aplikasi"]
+        N[NGINX] --> F[PHP-FPM 8.3]
+        F --> L[Laravel 12]
+        L --> LW[Livewire<br>Buat · Kelola · User]
+        L --> P[Halaman publik]
+    end
+    L --> DB[(MySQL 8.4)]
+    L --> S[(Volume unggahan logo)]
+    L <-->|OAuth| G[Google]
+```
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+## 🚀 Mulai Cepat
 
 ### Dengan Docker (disarankan)
 
-Stack NGINX/PHP-FPM dan MySQL dengan volume persisten untuk database dan
-unggahan.
-
 ```sh
-cp .env.docker.example .env.docker   # lalu isi APP_KEY, DB_PASSWORD, DB_ROOT_PASSWORD, Google OAuth
+cp .env.docker.example .env.docker   # isi APP_KEY, DB_PASSWORD, DB_ROOT_PASSWORD, Google OAuth
 docker compose --env-file .env.docker build --pull
 docker compose --env-file .env.docker up -d --wait
 docker compose --env-file .env.docker exec app php artisan migrate --force
 ```
 
-Aplikasi berjalan di `http://localhost:8080`. Panduan lengkap, termasuk cara
-memperbarui tanpa kehilangan data, ada di [docs/docker.md](docs/docker.md).
+Buka `http://localhost:8080`. Panduan lengkap, termasuk pembaruan tanpa
+kehilangan data, ada di [docs/docker.md](docs/docker.md).
 
-### Tanpa Docker
+<details>
+<summary><strong>Tanpa Docker</strong></summary>
+
+<br>
 
 Butuh PHP **8.3.37 atau lebih baru di cabang 8.3**, Composer, Node.js, dan MySQL.
 
@@ -146,77 +205,113 @@ npm run build                 # atau `npm run dev` saat pengembangan
 php artisan serve
 ```
 
+</details>
+
 ### Membuat admin pertama
 
-Pengguna baru selalu ber-role `user`. Daftar lewat `/register`, lalu jadikan
-akun itu admin:
+Pengguna baru selalu ber-role `user`. Daftar lewat `/register`, lalu jadikan admin:
 
 ```sh
 php artisan tinker --execute="App\Models\User::where('email', 'email@anda')->update(['role' => 'admin']);"
 ```
 
-Di Docker, awali perintah tersebut dengan
-`docker compose --env-file .env.docker exec app`.
+Di Docker, awali dengan `docker compose --env-file .env.docker exec app`.
 
-## Konfigurasi
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
 
-Variabel penting di `.env` / `.env.docker`:
+## ⚙️ Konfigurasi
 
 | Variabel | Keterangan |
 | --- | --- |
-| `APP_URL` | URL publik aplikasi; dipakai untuk tautan dan QR code |
+| `APP_URL` | URL publik aplikasi, dipakai untuk tautan dan QR code |
 | `APP_ENV`, `APP_DEBUG` | Gunakan `production` dan `false` di server |
 | `DB_*` | Koneksi MySQL |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Kredensial OAuth dari Google Cloud Console |
 | `GOOGLE_REDIRECT_URI` | `APP_URL` + `/auth/google/callback` |
 
-## Pengujian
+<details>
+<summary><strong>Daftar halaman aplikasi</strong></summary>
+
+<br>
+
+| URL | Keterangan | Akses |
+| --- | --- | --- |
+| `/login`, `/register` | Masuk dan daftar | Publik |
+| `/auth/google` | Login dengan Google | Publik |
+| `/dashboard` | Ringkasan | Login |
+| `/buat-tautan` | Membuat halaman tautan | Login |
+| `/kelola-tautan` | Daftar dan pengelolaan halaman | Login |
+| `/edit-tautan/{id}` | Mengedit halaman milik sendiri | Login |
+| `/user/profile` | Profil, password, 2FA, sesi | Login |
+| `/user-management` | Manajemen user | Admin |
+| `/{slug}` | Halaman tautan publik | Publik |
+
+</details>
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+## 📁 Struktur Proyek
+
+```text
+app/
+├── Http/Controllers/      # Halaman publik, Google OAuth
+├── Http/Livewire/         # BuatTautan, EditTautan, KelolaTautan, UserManagement, Dashboard
+├── Http/Middleware/       # Role, status akun, status tautan
+└── Models/                # Tautan, User
+resources/views/           # Blade + Livewire views (termasuk tautan/public.blade.php)
+database/migrations/       # Skema users dan tautans
+tests/Feature/             # Tes fitur (Livewire, akses, keamanan)
+docker/ · Dockerfile · compose.yaml
+docs/                      # Panduan Docker, catatan keamanan, screenshot
+```
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+## 🧪 Pengujian & CI
 
 ```sh
 php vendor/bin/phpunit
 ```
 
-Atau di Docker, dengan runtime yang sama seperti produksi:
+Atau dengan runtime yang sama seperti produksi:
 
 ```sh
 docker build --pull --target testing -t tautpinang:tests .
 docker run --rm --entrypoint php tautpinang:tests vendor/bin/phpunit --colors=never --fail-on-warning
 ```
 
-Setiap push dicek oleh workflow GitHub Actions
-[PHP runtime security](.github/workflows/php-runtime.yml): audit Composer, suite
-PHPUnit, build image produksi, verifikasi versi PHP CLI/FPM, migrasi MySQL, dan
-smoke test login lewat NGINX/PHP-FPM. Hasil terakhir (26 November 2026): 44 test,
-**37 lulus, 7 dilewati, 0 gagal**; audit Composer **0 advisori**.
+Setiap push dicek oleh workflow
+[PHP runtime security](.github/workflows/php-runtime.yml):
 
-## Keamanan
+| Tahap | Pemeriksaan |
+| --- | --- |
+| Dependensi | `composer audit`, `composer validate`, platform requirement |
+| Tes | Suite PHPUnit lengkap |
+| Image | Build produksi, versi PHP CLI dan FPM, `session.upload_progress` mati |
+| Integrasi | Migrasi MySQL, smoke test login lewat NGINX/PHP-FPM, volume unggahan bertahan |
 
-### 26 November 2026 — PHP 8.3.37
+Hasil terakhir (26 November 2026): **47 test, 40 lulus, 7 dilewati, 0 gagal**;
+audit Composer **0 advisori**.
 
-PHP **8.3.37** (rilis keamanan 19 November 2026) menambal 15 CVE, termasuk
-request smuggling PHP-FPM (CVE-2026-129289), use-after-free epoll PHP-FPM
-(CVE-2026-129291), serta RCE melalui session (CVE-2026-126714, CVE-2026-115560)
-dan cache timezone (CVE-2026-129496). Minimum runtime kini `~8.3.37`.
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
 
-Pembaruan ini juga:
+## 🛡️ Keamanan
 
-- menaikkan Laravel ke 12.74.0 dan Symfony ke 7.4.24, serta menutup 20
-  advisori Composer baru;
-- memperbaiki stored XSS pada icon tautan di halaman publik.
+| Tanggal | Pembaruan |
+| --- | --- |
+| 26 Nov 2026 | PHP **8.3.37** (15 CVE, termasuk request smuggling PHP-FPM dan RCE via session/timezone); Laravel 12.74.0 dan Symfony 7.4.24 (20 advisori Composer); perbaikan stored XSS pada icon; halaman akun nonaktif disembunyikan |
+| 23 Okt 2026 | PHP **8.3.36** untuk CVE-2026-109618 dan CVE-2026-109619 (RCE tanpa autentikasi); pembaruan seluruh dependensi |
 
-### 23 Oktober 2026 — PHP 8.3.36
+> [!IMPORTANT]
+> Push kode tidak memperbarui server. Image harus dibangun ulang dan semua
+> container/worker lama harus diganti. Panduan rebuild, verifikasi PHP-FPM, dan
+> daftar CVE lengkap ada di [docs/php-security-update.md](docs/php-security-update.md).
 
-Menindaklanjuti **CVE-2026-109618** dan **CVE-2026-109619** (RCE tanpa
-autentikasi, juga pada PHP-FPM) dari
-[advisori resmi PHP 21 Oktober 2026](https://www.php.net/archive/2026.php#2026-10-21-5),
-serta memperbarui seluruh dependensi Composer.
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
 
-### Catatan deployment
+---
 
-Dockerfile mengunci image CLI dan FPM-NGINX ke versi PHP yang sudah ditambal
-beserta digest-nya, dan Composer menolak runtime yang lebih lama.
-**Push kode tidak memperbarui server: image harus dibangun ulang dan semua
-container/worker lama harus diganti.**
-
-Panduan rebuild, verifikasi PHP-FPM, dan daftar CVE lengkap ada di
-[docs/php-security-update.md](docs/php-security-update.md).
+<div align="center">
+  <img src="public/img/favicon.png" alt="" width="32"><br>
+  <sub>Dikembangkan oleh <a href="https://github.com/albertassidiq">@albertassidiq</a> · Dibuat di Tanjungpinang</sub>
+</div>
