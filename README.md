@@ -88,7 +88,8 @@ tombol tautan, dan lima halaman terbaru.
 | Manajemen user: tambah, edit, ubah role, reset password | — | ✅ |
 | Mengaktifkan/menonaktifkan akun user | — | ✅ |
 
-Menonaktifkan akun user juga menandai semua halaman tautannya sebagai nonaktif.
+Halaman tautan milik akun yang dinonaktifkan (`inactive` atau `disabled`) tidak
+dapat diakses publik dan menampilkan 404, sampai akunnya diaktifkan kembali.
 Admin tidak dapat menonaktifkan admin lain.
 
 ## Halaman aplikasi

@@ -91,6 +91,19 @@ class Tautan extends Model
         return $query->where('is_active', true);
     }
 
+    /**
+     * Pages that may be shown publicly: the page itself is active and its
+     * owner's account is active. The owner's status is checked directly so a
+     * page goes offline however the account was deactivated.
+     */
+    public function scopePubliclyVisible($query)
+    {
+        return $query->where('is_active', true)
+            ->whereHas('user', function ($owner) {
+                $owner->where('status', 'active');
+            });
+    }
+
     public function scopeByUser($query, $userId)
     {
         return $query->where('user_id', $userId);

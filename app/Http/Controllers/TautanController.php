@@ -125,7 +125,7 @@ class TautanController extends Controller
 
         // Cari tautan berdasarkan slug
         $tautan = Tautan::where('slug', $slug)
-            ->where('is_active', true)
+            ->publiclyVisible()
             ->first();
 
         // Jika tautan tidak ditemukan, tampilkan custom 404 page
