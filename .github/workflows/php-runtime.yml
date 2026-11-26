@@ -46,7 +46,7 @@ jobs:
           docker run --rm --entrypoint php-fpm tautpinang:local -v
           docker run --rm --entrypoint composer tautpinang:local check-platform-reqs --no-dev
           docker run --rm --entrypoint php tautpinang:local -r '
-            if (PHP_VERSION_ID < 80336 || PHP_VERSION_ID >= 80400) {
+            if (PHP_VERSION_ID < 80337 || PHP_VERSION_ID >= 80400) {
                 fwrite(STDERR, "Expected patched PHP 8.3 runtime.\n");
                 exit(1);
             }

@@ -1,5 +1,49 @@
 # Tindak lanjut php2shell
 
+## Pembaruan 26 November 2026 — PHP 8.3.37
+
+PHP merilis 8.2.36, 8.3.37, 8.4.28, dan 8.5.13 pada 18–19 November 2026 sebagai
+rilis keamanan; tingkat keparahan tertinggi **CRITICAL** (menurut php.net, isu
+critical memerlukan konfigurasi non-default atau setup yang jarang). Versi
+8.3.36 tidak lagi memadai. CVE yang ditambal di cabang 8.3:
+
+| Komponen | CVE | Ringkasan |
+| --- | --- | --- |
+| FPM | CVE-2026-129289 | Request smuggling melalui body request yang tidak terbaca |
+| FPM | CVE-2026-129291 | Use-after-free epoll, eskalasi hak akses lokal |
+| FPM | CVE-2026-129292 | XSS pada endpoint status FPM |
+| Session | CVE-2026-126714 | File session yang tertimpa sebagian dapat berujung RCE |
+| Session | CVE-2026-115560 | Ketidakcocokan serializer session dapat berujung RCE |
+| Session | CVE-2026-129481 | Use-after-free setelah shutdown session terputus |
+| Date | CVE-2026-129496 | Use-after-free cache timezone dapat berujung RCE |
+| CGI | CVE-2026-129538 | Out-of-bounds read/write saat koreksi PATH_INFO |
+| Phar | CVE-2026-128090 | Bypass tanda tangan OpenSSL melalui downgrade algoritma |
+| SOAP | CVE-2026-15353, CVE-2026-129506 | Kebocoran informasi dan use-after-free |
+| Standard | CVE-2026-128064, CVE-2026-127960 | URL HTTPS/FTPS mixed-case terkirim plaintext; DoS header terlipat |
+
+Perubahan repository:
+
+- Image `serversideup/php:8.3.37-cli` dan `8.3.37-fpm-nginx` dikunci dengan
+  digest multi-architecture (diambil dari Docker Hub 26 November 2026).
+- `composer.json` menolak PHP di bawah 8.3.37; workflow CI memeriksa
+  `PHP_VERSION_ID >= 80337`.
+- Dependensi diperbarui untuk 20 advisori Composer baru (2–17 November 2026):
+  Laravel 12.70.1 → **12.74.0** (CVE-2026-128083), Symfony 7.4.19/7.4.21 →
+  **7.4.24** (antara lain CVE-2026-121619, CVE-2026-135801, CVE-2026-135802,
+  CVE-2026-118516, CVE-2026-121623, CVE-2026-45070), phpseclib → **4.0.4**,
+  web-auth/webauthn-lib → **5.3.17**. `composer audit --locked`: 0 advisori.
+- Stored XSS diperbaiki: kelas icon tautan berasal dari klien Livewire dan
+  sebelumnya dicetak tanpa escape di halaman publik. Kini hanya kelas Font
+  Awesome yang diterima (`Tautan::sanitizeIconClass`) saat dipilih maupun
+  disimpan, dan output selalu di-escape, termasuk untuk data lama di database.
+  Test: `tests/Feature/LinkIconSanitizationTest.php`.
+- `.claude/settings.local.json` (berisi token API) dikeluarkan dari repository
+  dan ditambahkan ke `.gitignore`. Token tetap ada di history git, jadi harus
+  dicabut dan diganti di penyedia layanannya.
+
+Langkah deployment sama seperti di bawah, dengan tag `8.3.37`. Pastikan CLI dan
+FPM pada container yang melayani trafik menunjukkan PHP 8.3.37 atau lebih baru.
+
 Tanggal perubahan: 23 Oktober 2026.
 
 ## Ruang lingkup

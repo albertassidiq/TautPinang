@@ -1,95 +1,317 @@
+<a id="readme-top"></a>
+
+<div align="center">
+
+<img src="public/img/favicon.png" alt="Logo TautPinang" width="120" height="120">
+
 # TautPinang
 
-## Pembaruan dependensi dan Docker
+**Satu halaman, banyak tautan: rapi, cepat, dan mudah dibagikan.**
 
-Project kini memakai Laravel **12.70.1**, Jetstream **5.5.3**, Livewire **3.8.11**,
-dan PHP **8.3.36**. Seluruh 53 advisori Composer yang sebelumnya ditemukan
-sudah diselesaikan: audit terbaru melaporkan **0 advisori**. Suite PHPUnit
-menjalankan 40 test: **33 lulus, 7 dilewati, 0 gagal**.
+Aplikasi web untuk membuat dan mengelola halaman kumpulan tautan (*link-in-bio*)
+lengkap dengan QR code, gaya tampilan yang bisa diatur, dan panel admin.
 
-Tersedia `Dockerfile`, `compose.yaml`, serta `.env.docker.example` untuk stack
-NGINX/PHP-FPM dan MySQL dengan volume persisten. Ikuti [panduan Docker](docs/docker.md)
-untuk konfigurasi, menjalankan aplikasi, dan pembaruan tanpa menghapus data.
+[![PHP runtime security](https://github.com/albertassidiq/TautPinang/actions/workflows/php-runtime.yml/badge.svg)](https://github.com/albertassidiq/TautPinang/actions/workflows/php-runtime.yml)
+![PHP](https://img.shields.io/badge/PHP-8.3.37-777BB4?logo=php&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
+![Livewire](https://img.shields.io/badge/Livewire-3-FB70A9?logo=livewire&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
 
-## Pembaruan keamanan PHP — 23 Oktober 2026
+[Fitur](#-fitur) · [Tampilan](#-tampilan) · [Tech Stack](#-tech-stack) · [Mulai Cepat](#-mulai-cepat) · [Keamanan](#-keamanan)
 
-Project ini menggunakan **PHP 8.3.36 atau patch PHP 8.3 yang lebih baru**
-(`~8.3.36`). Dockerfile mengunci image CLI dan FPM-NGINX ke PHP 8.3.36 beserta
-digest multi-architecture yang sudah diperiksa di registry. Composer memeriksa
-versi PHP dan extension di tahap build maupun image produksi.
+<br>
 
-Ini menindaklanjuti **CVE-2026-109618** dan **CVE-2026-109619** dalam
-[advisori resmi PHP tanggal 21 Oktober 2026](https://www.php.net/archive/2026.php#2026-10-21-5).
-Kerentanan berada di runtime PHP dan dapat terpicu sebelum aplikasi berjalan.
-**Push kode belum memperbarui server: image harus dibangun ulang dan semua
-container/worker lama harus diganti.**
+<img src="docs/screenshots/buat-tautan.png" alt="Halaman Buat Tautan dengan live preview" width="88%">
 
-Panduan rebuild, verifikasi PHP-FPM, dan inventaris tindak lanjut tersedia di
-[docs/php-security-update.md](docs/php-security-update.md).
+</div>
 
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<br>
+
+<details>
+<summary><strong>Daftar isi</strong></summary>
+
+- [Tentang](#-tentang)
+- [Fitur](#-fitur)
+- [Tampilan](#-tampilan)
+- [Tech Stack](#-tech-stack)
+- [Arsitektur](#-arsitektur)
+- [Mulai Cepat](#-mulai-cepat)
+- [Konfigurasi](#-konfigurasi)
+- [Struktur Proyek](#-struktur-proyek)
+- [Pengujian & CI](#-pengujian--ci)
+- [Keamanan](#-keamanan)
+
+</details>
+
+## 📌 Tentang
+
+TautPinang mengumpulkan banyak tautan penting ke dalam satu halaman dengan
+alamat yang mudah diingat, misalnya `https://domain-anda/layanan-statistik`.
+Halaman bisa dibuat tanpa menulis kode, langsung terlihat hasilnya lewat
+*live preview*, dan bisa dibagikan sebagai tautan atau QR code.
+
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <h3>🎨 Desain tanpa kode</h3>
+      Atur logo, warna, tombol, efek hover, icon, dan QR code, lalu lihat hasilnya seketika.
+    </td>
+    <td width="33%" valign="top">
+      <h3>🗂️ Kelola dengan mudah</h3>
+      Cari, filter, duplikat, aksi massal, impor/ekspor JSON, dan pemulihan data terhapus.
+    </td>
+    <td width="33%" valign="top">
+      <h3>🔐 Aman untuk tim</h3>
+      Peran admin dan user, login Google, 2FA, dan akun nonaktif otomatis menonaktifkan halamannya.
+    </td>
+  </tr>
+</table>
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+## ✨ Fitur
+
+### Pembuat tautan
+
+| Fitur | Keterangan |
+| --- | --- |
+| **Live preview** | Tampilan halaman diperbarui seketika saat form diubah, dalam mode mobile atau desktop. |
+| **Identitas halaman** | Judul, deskripsi, dan *slug* unik yang menjadi alamat publik. |
+| **Logo** | Dari URL atau unggah gambar (klik atau *drag & drop*, maks. 2 MB). |
+| **Daftar tautan** | Tambah, hapus, urutkan dengan *drag & drop*, dan aktif/nonaktifkan per tautan. |
+| **Icon** | Pilih icon Font Awesome untuk tiap tautan lewat icon picker. |
+| **Gaya tombol** | Warna latar, teks, dan border; radius; efek hover (gradien dan *glow*); warna RGBA; warna khusus per tautan. |
+| **QR code** | Atur posisi, ukuran, warna, border, dan transparansi QR code halaman. |
+| **Footer dan editor JSON** | Dua baris footer, plus editor gaya JSON untuk mengatur seluruh gaya sekaligus. |
+| **Unduh HTML** | Ekspor halaman sebagai file `.html` statis. |
+
+### Halaman publik
+
+- Bisa diakses tanpa login di `/{slug}`, nyaman dibuka di ponsel.
+- Meta tag Open Graph untuk pratinjau saat dibagikan ke media sosial.
+- Tautan nonaktif disembunyikan. Halaman nonaktif, halaman milik akun nonaktif,
+  atau slug yang tidak ada menampilkan halaman 404 khusus.
+
+### Kelola tautan
+
+- Cari, filter (status, jenis logo), dan urutkan; statistik total, aktif, terhapus, dan jumlah tautan.
+- Lihat detail, edit, **duplikat**, serta aktifkan/nonaktifkan halaman.
+- **Aksi massal**: aktifkan, nonaktifkan, atau hapus beberapa halaman sekaligus.
+- **Impor dan ekspor** data dalam format JSON.
+- **Riwayat terhapus**: pulihkan halaman atau hapus permanen, satu per satu maupun massal.
+
+### Akun dan admin
+
+- Registrasi, login email/password, dan **login dengan Google**.
+- Autentikasi dua faktor (2FA), kelola profil, password, dan sesi browser.
+- **Manajemen user** (admin): tambah, edit, ubah role, reset password, aktifkan/nonaktifkan akun.
+- **Mode gelap** di seluruh halaman utama.
+
+| Kemampuan | User | Admin |
+| --- | :---: | :---: |
+| Membuat, mengedit, dan menghapus halaman milik sendiri | ✅ | ✅ |
+| Melihat dan mengaktifkan/menonaktifkan halaman semua pengguna | — | ✅ |
+| Manajemen user dan role | — | ✅ |
+
+> [!NOTE]
+> Hanya pembuat halaman yang dapat mengubah isinya. Halaman milik akun yang
+> dinonaktifkan langsung tidak dapat diakses publik sampai akunnya aktif kembali.
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+## 📸 Tampilan
+
+<table>
+  <tr>
+    <td width="68%" align="center"><img src="docs/screenshots/kelola-tautan.png" alt="Kelola Tautan"><br><sub><b>Kelola Tautan</b>: statistik, pencarian, dan aksi cepat</sub></td>
+    <td width="32%" align="center" rowspan="2"><img src="docs/screenshots/public-mobile.png" alt="Halaman publik di ponsel"><br><sub><b>Halaman publik</b> di ponsel</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/user-management.png" alt="User Management"><br><sub><b>User Management</b>: role dan status akun</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/buat-tautan-dark.png" alt="Buat Tautan mode gelap"><br><sub><b>Mode gelap</b></sub></td>
+    <td align="center"><img src="docs/screenshots/login.png" alt="Halaman login"><br><sub><b>Login</b> dengan email atau Google</sub></td>
+  </tr>
+</table>
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+## 🧰 Tech Stack
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <a href="https://skillicons.dev"><img src="https://skillicons.dev/icons?i=php,laravel,tailwind,alpinejs,vite,mysql,sqlite,docker,nginx,githubactions" alt="Tech stack"></a>
 </p>
 
-## About Laravel
+| Lapisan | Teknologi |
+| --- | --- |
+| Backend | PHP 8.3.37, Laravel 12, Livewire 3 |
+| Autentikasi | Jetstream 5 (Fortify, Sanctum), Laravel Socialite (Google OAuth) |
+| Frontend | Tailwind CSS 3, Alpine.js, Vite, Font Awesome |
+| Database | MySQL 8.4 (produksi), SQLite (pengujian) |
+| Infrastruktur | Docker (`serversideup/php`: NGINX + PHP-FPM), GitHub Actions |
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🏗️ Arsitektur
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```mermaid
+flowchart LR
+    V([Pengunjung]) -->|/slug| N
+    U([User / Admin]) -->|dashboard| N
+    subgraph App["Container aplikasi"]
+        N[NGINX] --> F[PHP-FPM 8.3]
+        F --> L[Laravel 12]
+        L --> LW[Livewire<br>Buat · Kelola · User]
+        L --> P[Halaman publik]
+    end
+    L --> DB[(MySQL 8.4)]
+    L --> S[(Volume unggahan logo)]
+    L <-->|OAuth| G[Google]
+```
 
-## Learning Laravel
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🚀 Mulai Cepat
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Dengan Docker (disarankan)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```sh
+cp .env.docker.example .env.docker   # isi APP_KEY, DB_PASSWORD, DB_ROOT_PASSWORD, Google OAuth
+docker compose --env-file .env.docker build --pull
+docker compose --env-file .env.docker up -d --wait
+docker compose --env-file .env.docker exec app php artisan migrate --force
+```
 
-## Laravel Sponsors
+Buka `http://localhost:8080`. Panduan lengkap, termasuk pembaruan tanpa
+kehilangan data, ada di [docs/docker.md](docs/docker.md).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+<details>
+<summary><strong>Tanpa Docker</strong></summary>
 
-### Premium Partners
+<br>
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+Butuh PHP **8.3.37 atau lebih baru di cabang 8.3**, Composer, Node.js, dan MySQL.
 
-## Contributing
+```sh
+composer install
+npm ci
+cp .env.example .env          # atur koneksi database
+php artisan key:generate
+php artisan migrate
+php artisan storage:link      # agar logo unggahan bisa diakses
+npm run build                 # atau `npm run dev` saat pengembangan
+php artisan serve
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+</details>
 
-## Code of Conduct
+### Membuat admin pertama
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Pengguna baru selalu ber-role `user`. Daftar lewat `/register`, lalu jadikan admin:
 
-## Security Vulnerabilities
+```sh
+php artisan tinker --execute="App\Models\User::where('email', 'email@anda')->update(['role' => 'admin']);"
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Di Docker, awali dengan `docker compose --env-file .env.docker exec app`.
 
-## License
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## ⚙️ Konfigurasi
+
+| Variabel | Keterangan |
+| --- | --- |
+| `APP_URL` | URL publik aplikasi, dipakai untuk tautan dan QR code |
+| `APP_ENV`, `APP_DEBUG` | Gunakan `production` dan `false` di server |
+| `DB_*` | Koneksi MySQL |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Kredensial OAuth dari Google Cloud Console |
+| `GOOGLE_REDIRECT_URI` | `APP_URL` + `/auth/google/callback` |
+
+<details>
+<summary><strong>Daftar halaman aplikasi</strong></summary>
+
+<br>
+
+| URL | Keterangan | Akses |
+| --- | --- | --- |
+| `/login`, `/register` | Masuk dan daftar | Publik |
+| `/auth/google` | Login dengan Google | Publik |
+| `/dashboard` | Ringkasan | Login |
+| `/buat-tautan` | Membuat halaman tautan | Login |
+| `/kelola-tautan` | Daftar dan pengelolaan halaman | Login |
+| `/edit-tautan/{id}` | Mengedit halaman milik sendiri | Login |
+| `/user/profile` | Profil, password, 2FA, sesi | Login |
+| `/user-management` | Manajemen user | Admin |
+| `/{slug}` | Halaman tautan publik | Publik |
+
+</details>
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+## 📁 Struktur Proyek
+
+```text
+app/
+├── Http/Controllers/      # Halaman publik, Google OAuth
+├── Http/Livewire/         # BuatTautan, EditTautan, KelolaTautan, UserManagement, Dashboard
+├── Http/Middleware/       # Role, status akun, status tautan
+└── Models/                # Tautan, User
+resources/views/           # Blade + Livewire views (termasuk tautan/public.blade.php)
+database/migrations/       # Skema users dan tautans
+tests/Feature/             # Tes fitur (Livewire, akses, keamanan)
+docker/ · Dockerfile · compose.yaml
+docs/                      # Panduan Docker, catatan keamanan, screenshot
+```
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+## 🧪 Pengujian & CI
+
+```sh
+php vendor/bin/phpunit
+```
+
+Atau dengan runtime yang sama seperti produksi:
+
+```sh
+docker build --pull --target testing -t tautpinang:tests .
+docker run --rm --entrypoint php tautpinang:tests vendor/bin/phpunit --colors=never --fail-on-warning
+```
+
+Setiap push dicek oleh workflow
+[PHP runtime security](.github/workflows/php-runtime.yml):
+
+| Tahap | Pemeriksaan |
+| --- | --- |
+| Dependensi | `composer audit`, `composer validate`, platform requirement |
+| Tes | Suite PHPUnit lengkap |
+| Image | Build produksi, versi PHP CLI dan FPM, `session.upload_progress` mati |
+| Integrasi | Migrasi MySQL, smoke test login lewat NGINX/PHP-FPM, volume unggahan bertahan |
+
+Hasil terakhir (26 November 2026): **47 test, 40 lulus, 7 dilewati, 0 gagal**;
+audit Composer **0 advisori**.
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+## 🛡️ Keamanan
+
+| Tanggal | Pembaruan |
+| --- | --- |
+| 26 Nov 2026 | PHP **8.3.37** (15 CVE, termasuk request smuggling PHP-FPM dan RCE via session/timezone); Laravel 12.74.0 dan Symfony 7.4.24 (20 advisori Composer); perbaikan stored XSS pada icon; halaman akun nonaktif disembunyikan |
+| 23 Okt 2026 | PHP **8.3.36** untuk CVE-2026-109618 dan CVE-2026-109619 (RCE tanpa autentikasi); pembaruan seluruh dependensi |
+
+> [!IMPORTANT]
+> Push kode tidak memperbarui server. Image harus dibangun ulang dan semua
+> container/worker lama harus diganti. Panduan rebuild, verifikasi PHP-FPM, dan
+> daftar CVE lengkap ada di [docs/php-security-update.md](docs/php-security-update.md).
+
+<p align="right">(<a href="#readme-top">kembali ke atas</a>)</p>
+
+---
+
+<div align="center">
+  <img src="public/img/favicon.png" alt="" width="32"><br>
+  <sub>Dikembangkan oleh <a href="https://github.com/albertassidiq">@albertassidiq</a> · Dibuat di Tanjungpinang</sub>
+</div>

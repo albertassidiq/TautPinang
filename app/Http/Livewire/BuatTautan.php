@@ -1132,9 +1132,9 @@ class BuatTautan extends Component
 
             // ✅ SIMPAN KE DATABASE - Simpan SEMUA links (termasuk yang inactive)
             // Filter hanya link yang punya judul dan url (tapi boleh inactive)
-            $linksToSave = array_values(array_filter($this->links, function ($link) {
+            $linksToSave = Tautan::sanitizeLinkIcons(array_values(array_filter($this->links, function ($link) {
                 return !empty($link['judul']) && !empty($link['url']);
-            }));
+            })));
 
             $tautan = Tautan::create([
                 'user_id' => Auth::id(),
@@ -1209,7 +1209,7 @@ class BuatTautan extends Component
             $linkJudul = htmlspecialchars($link['judul'], ENT_QUOTES, 'UTF-8');
 
             // Icon support
-            $icon = $link['icon'] ?? '';
+            $icon = htmlspecialchars(Tautan::sanitizeIconClass($link['icon'] ?? ''), ENT_QUOTES, 'UTF-8');
             $iconHtml = '';
             if (!empty($icon)) {
                 $iconHtml = "<i class=\"{$icon} link-icon\"></i> ";
@@ -2563,7 +2563,7 @@ Author: BPS Kota Tanjungpinang
     public function setIcon($iconClass)
     {
         if ($this->selectedLinkIndex !== null) {
-            $this->links[$this->selectedLinkIndex]['icon'] = $iconClass;
+            $this->links[$this->selectedLinkIndex]['icon'] = Tautan::sanitizeIconClass($iconClass);
             $this->showIconPicker = false;
             $this->selectedLinkIndex = null;
             $this->generatePreview();
