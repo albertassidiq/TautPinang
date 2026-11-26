@@ -2,19 +2,27 @@
 
 ## Pembaruan dependensi dan Docker
 
-Project kini memakai Laravel **12.70.1**, Jetstream **5.5.3**, Livewire **3.8.11**,
-dan PHP **8.3.36**. Seluruh 53 advisori Composer yang sebelumnya ditemukan
-sudah diselesaikan: audit terbaru melaporkan **0 advisori**. Suite PHPUnit
-menjalankan 40 test: **33 lulus, 7 dilewati, 0 gagal**.
+Project kini memakai Laravel **12.74.0**, Symfony **7.4.24**, Jetstream **5.5.3**,
+Livewire **3.8.11**, dan PHP **8.3.37**. Audit Composer terbaru (26 November 2026)
+melaporkan **0 advisori**.
 
 Tersedia `Dockerfile`, `compose.yaml`, serta `.env.docker.example` untuk stack
 NGINX/PHP-FPM dan MySQL dengan volume persisten. Ikuti [panduan Docker](docs/docker.md)
 untuk konfigurasi, menjalankan aplikasi, dan pembaruan tanpa menghapus data.
 
+## Pembaruan keamanan PHP — 26 November 2026
+
+PHP **8.3.37** (rilis keamanan 19 November 2026) menambal 15 CVE, termasuk
+request smuggling PHP-FPM (CVE-2026-129289), use-after-free epoll PHP-FPM
+(CVE-2026-129291), serta RCE melalui session (CVE-2026-126714, CVE-2026-115560)
+dan cache timezone (CVE-2026-129496). Minimum runtime kini `~8.3.37`. Pembaruan
+ini juga menutup 20 advisori Composer baru dan stored XSS pada icon tautan.
+Detail di [docs/php-security-update.md](docs/php-security-update.md).
+
 ## Pembaruan keamanan PHP — 23 Oktober 2026
 
-Project ini menggunakan **PHP 8.3.36 atau patch PHP 8.3 yang lebih baru**
-(`~8.3.36`). Dockerfile mengunci image CLI dan FPM-NGINX ke PHP 8.3.36 beserta
+Project ini menggunakan **PHP 8.3.37 atau patch PHP 8.3 yang lebih baru**
+(`~8.3.37`). Dockerfile mengunci image CLI dan FPM-NGINX ke PHP 8.3.37 beserta
 digest multi-architecture yang sudah diperiksa di registry. Composer memeriksa
 versi PHP dan extension di tahap build maupun image produksi.
 
