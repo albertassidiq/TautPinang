@@ -1,6 +1,6 @@
 # Menjalankan TautPinang dengan Docker
 
-Dockerfile menggunakan PHP 8.3.36, NGINX/PHP-FPM, Node.js 24 untuk build aset,
+Dockerfile menggunakan PHP 8.3.37, NGINX/PHP-FPM, Node.js 24 untuk build aset,
 dan dependensi Composer dari lockfile. Image produksi berjalan sebagai
 `www-data`. Target `testing` memasang dependensi pengujian dan SQLite.
 
@@ -19,7 +19,7 @@ Prasyarat: Docker Engine/Desktop dengan Docker Compose v2.
 2. Buat kunci aplikasi melalui PHP yang sudah ditambal:
 
    ```sh
-   docker run --rm --entrypoint php serversideup/php:8.3.36-cli -r 'echo "base64:".base64_encode(random_bytes(32)).PHP_EOL;'
+   docker run --rm --entrypoint php serversideup/php:8.3.37-cli -r 'echo "base64:".base64_encode(random_bytes(32)).PHP_EOL;'
    ```
 
    Isi hasilnya pada `APP_KEY`. Isi juga `DB_PASSWORD` dan `DB_ROOT_PASSWORD`
